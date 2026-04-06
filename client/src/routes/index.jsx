@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react'
 import { RootLayout } from '../components/layout/RootLayout'
 import { AuthLayout } from '../components/layout/AuthLayout'
 import { ProtectedRoute } from '../components/auth/ProtectedRoute'
+import { ProtectedLayout } from '../components/auth/ProtectedLayout'
 import { RoleGuard } from '../components/auth/RoleGuard'
 import { PageSpinner } from '../components/shared/Spinner'
 import { ROLES } from '../lib/constants'
@@ -25,6 +26,8 @@ const HomePage = lazy(() => import('../pages/home/HomePage'))
 const DatasetBrowsePage = lazy(() => import('../pages/datasets/DatasetBrowsePage'))
 const DatasetDetailPage = lazy(() => import('../pages/datasets/DatasetDetailPage'))
 const DatasetUploadPage = lazy(() => import('../pages/datasets/DatasetUploadPage'))
+const DatasetEditPage = lazy(() => import('../pages/datasets/DatasetEditPage'))
+const MyDatasetsPage = lazy(() => import('../pages/datasets/MyDatasetsPage'))
 const SearchResultsPage = lazy(() => import('../pages/search/SearchResultsPage'))
 const DiscussionsPage = lazy(() => import('../pages/community/DiscussionsPage'))
 const UserProfilePage = lazy(() => import('../pages/profile/UserProfilePage'))
@@ -63,9 +66,11 @@ export const router = createBrowserRouter([
 
       // Protected routes
       {
-        element: <ProtectedRoute><></></ProtectedRoute>,
+        element: <ProtectedLayout />,
         children: [
           { path: '/datasets/upload', element: wrap(DatasetUploadPage) },
+          { path: '/datasets/:slug/edit', element: wrap(DatasetEditPage) },
+          { path: '/my-datasets', element: wrap(MyDatasetsPage) },
           { path: '/account/profile', element: wrap(EditProfilePage) },
           { path: '/account/api-keys', element: wrap(ApiKeysPage) },
         ],

@@ -1,21 +1,23 @@
 import { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Heart, Download, FileText, Calendar, Tag, Globe, Clock, Building2 } from 'lucide-react'
+import { Heart, Download, FileText, Calendar, Tag, Globe, Clock, Building2, MessageSquare, Pencil } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import toast from 'react-hot-toast'
 import { datasetsApi } from '../../api/datasets.api'
+import { communityApi } from '../../api/community.api'
 import { useAuthStore } from '../../store/authStore'
 import { Badge } from '../../components/shared/Badge'
 import { Button } from '../../components/shared/Button'
 import { Table } from '../../components/shared/Table'
 import { StarRating } from '../../components/shared/StarRating'
 import { Textarea } from '../../components/shared/Textarea'
+import { Input } from '../../components/shared/Input'
 import { PageSpinner } from '../../components/shared/Spinner'
 import { DATASET_CATEGORIES } from '../../lib/constants'
 import { formatFileSize, formatNumber } from '../../lib/utils'
 
-const TABS = ['Files', 'Reviews', 'Versions']
+const TABS = ['Files', 'Reviews', 'Versions', 'Discussions']
 
 function getCategoryLabel(value) {
   return DATASET_CATEGORIES.find((c) => c.value === value)?.label ?? value
@@ -33,6 +35,9 @@ export default function DatasetDetailPage() {
   const [activeTab, setActiveTab] = useState('Files')
   const [reviewRating, setReviewRating] = useState(0)
   const [reviewComment, setReviewComment] = useState('')
+  const [discussionTitle, setDiscussionTitle] = useState('')
+  const [discussionBody, setDiscussionBody] = useState('')
+  const [showDiscussionForm, setShowDiscussionForm] = useState(false)
 
   // Fetch dataset
   const { data: dataset, isLoading, isError } = useQuery({
@@ -54,6 +59,26 @@ export default function DatasetDetailPage() {
     queryKey: ['dataset-versions', slug],
     queryFn: () => datasetsApi.getVersions(slug).then((r) => r.data),
     enabled: activeTab === 'Versions' && !!dataset,
+  })
+
+  // Fetch discussions
+  const { data: discussionsData } = useQuery({
+    queryKey: ['dataset-discussions', slug],
+    queryFn: () => communityApi.listDiscussions({ dataset: slug }).then((r) => r.data),
+    enabled: activeTab === 'Discussions' && !!dataset,
+  })
+
+  // Create discussion
+  const discussionMutation = useMutation({
+    mutationFn: (data) => communityApi.createDiscussion({ ...data, dataset: slug }),
+    onSuccess: () => {
+      toast.success('Discussion started')
+      setDiscussionTitle('')
+      setDiscussionBody('')
+      setShowDiscussionForm(false)
+      queryClient.invalidateQueries({ queryKey: ['dataset-discussions', slug] })
+    },
+    onError: () => toast.error('Failed to start discussion'),
   })
 
   // Like / Unlike
@@ -91,6 +116,12 @@ export default function DatasetDetailPage() {
     e.preventDefault()
     if (!reviewRating) return toast.error('Please select a star rating')
     reviewMutation.mutate({ rating: reviewRating, comment: reviewComment })
+  }
+
+  function handleSubmitDiscussion(e) {
+    e.preventDefault()
+    if (!discussionTitle.trim()) return toast.error('Please enter a title')
+    discussionMutation.mutate({ title: discussionTitle, body: discussionBody })
   }
 
   if (isLoading) return <PageSpinner />
@@ -250,6 +281,71 @@ export default function DatasetDetailPage() {
                       </p>
                     </div>
                   </div>
+                ))
+              )}
+            </div>
+          )}
+
+          {/* Discussions Tab */}
+          {activeTab === 'Discussions' && (
+            <div className="space-y-5">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-stone-500">
+                  {(discussionsData?.discussions ?? []).length} discussion{(discussionsData?.discussions ?? []).length !== 1 ? 's' : ''}
+                </p>
+                {isAuthenticated && !showDiscussionForm && (
+                  <Button size="sm" onClick={() => setShowDiscussionForm(true)}>
+                    <Pencil size={13} /> Start Discussion
+                  </Button>
+                )}
+              </div>
+
+              {showDiscussionForm && (
+                <form onSubmit={handleSubmitDiscussion} className="bg-stone-50 rounded-lg p-4 space-y-3 border border-stone-200">
+                  <p className="text-sm font-medium text-stone-700">New Discussion</p>
+                  <Input
+                    placeholder="Title"
+                    value={discussionTitle}
+                    onChange={(e) => setDiscussionTitle(e.target.value)}
+                  />
+                  <Textarea
+                    placeholder="What would you like to discuss about this dataset?"
+                    rows={3}
+                    value={discussionBody}
+                    onChange={(e) => setDiscussionBody(e.target.value)}
+                  />
+                  <div className="flex gap-2">
+                    <Button type="submit" size="sm" loading={discussionMutation.isPending}>
+                      Post
+                    </Button>
+                    <Button type="button" size="sm" variant="outline" onClick={() => setShowDiscussionForm(false)}>
+                      Cancel
+                    </Button>
+                  </div>
+                </form>
+              )}
+
+              {(discussionsData?.discussions ?? []).length === 0 ? (
+                <p className="text-sm text-stone-400 py-6 text-center">No discussions yet. Be the first to start one.</p>
+              ) : (
+                (discussionsData?.discussions ?? []).map((d) => (
+                  <Link
+                    key={d._id}
+                    to={`/community/${d._id}`}
+                    className="flex items-start gap-3 border-b border-stone-100 pb-4 hover:bg-stone-50 -mx-2 px-2 rounded transition-colors"
+                  >
+                    <MessageSquare size={15} className="text-stone-400 mt-0.5 shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-stone-800 hover:text-orange-700 transition-colors">
+                        {d.title}
+                      </p>
+                      <div className="flex items-center gap-3 mt-0.5 text-xs text-stone-400">
+                        <span>{d.user?.name ?? 'Anonymous'}</span>
+                        <span>{d.commentCount ?? 0} {d.commentCount === 1 ? 'reply' : 'replies'}</span>
+                        <span>{formatDistanceToNow(new Date(d.createdAt), { addSuffix: true })}</span>
+                      </div>
+                    </div>
+                  </Link>
                 ))
               )}
             </div>
