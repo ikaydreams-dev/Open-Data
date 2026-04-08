@@ -30,6 +30,7 @@ const DatasetEditPage = lazy(() => import('../pages/datasets/DatasetEditPage'))
 const MyDatasetsPage = lazy(() => import('../pages/datasets/MyDatasetsPage'))
 const SearchResultsPage = lazy(() => import('../pages/search/SearchResultsPage'))
 const DiscussionsPage = lazy(() => import('../pages/community/DiscussionsPage'))
+const DiscussionDetailPage = lazy(() => import('../pages/community/DiscussionDetailPage'))
 const UserProfilePage = lazy(() => import('../pages/profile/UserProfilePage'))
 const EditProfilePage = lazy(() => import('../pages/profile/EditProfilePage'))
 const OrgProfilePage = lazy(() => import('../pages/organization/OrgProfilePage'))
@@ -60,6 +61,7 @@ export const router = createBrowserRouter([
       { path: '/datasets/:slug', element: wrap(DatasetDetailPage) },
       { path: '/search', element: wrap(SearchResultsPage) },
       { path: '/community', element: wrap(DiscussionsPage) },
+      { path: '/community/:id', element: wrap(DiscussionDetailPage) },
       { path: '/users/:username', element: wrap(UserProfilePage) },
       { path: '/organizations/:slug', element: wrap(OrgProfilePage) },
       { path: '/403', element: wrap(ForbiddenPage) },

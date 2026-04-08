@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Heart, Download, FileText, Calendar, Tag, Globe, Clock, Building2, MessageSquare, Pencil } from 'lucide-react'
+import { Heart, Download, FileText, Calendar, Tag, Globe, Clock, Building2, MessageSquare, Pencil, Eye, Trash2 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import toast from 'react-hot-toast'
 import { datasetsApi } from '../../api/datasets.api'
@@ -14,6 +14,9 @@ import { StarRating } from '../../components/shared/StarRating'
 import { Textarea } from '../../components/shared/Textarea'
 import { Input } from '../../components/shared/Input'
 import { PageSpinner } from '../../components/shared/Spinner'
+import { ConfirmDialog } from '../../components/shared/ConfirmDialog'
+import { FilePreviewModal } from '../../components/datasets/FilePreviewModal'
+import { QualityScoreCard } from '../../components/datasets/QualityScoreCard'
 import { DATASET_CATEGORIES } from '../../lib/constants'
 import { formatFileSize, formatNumber } from '../../lib/utils'
 
@@ -38,6 +41,12 @@ export default function DatasetDetailPage() {
   const [discussionTitle, setDiscussionTitle] = useState('')
   const [discussionBody, setDiscussionBody] = useState('')
   const [showDiscussionForm, setShowDiscussionForm] = useState(false)
+  const [previewFile, setPreviewFile] = useState(null)
+  const [previewData, setPreviewData] = useState(null)
+  const [editingReview, setEditingReview] = useState(null)
+  const [editReviewRating, setEditReviewRating] = useState(0)
+  const [editReviewComment, setEditReviewComment] = useState('')
+  const [deleteReviewId, setDeleteReviewId] = useState(null)
 
   // Fetch dataset
   const { data: dataset, isLoading, isError } = useQuery({
@@ -100,6 +109,28 @@ export default function DatasetDetailPage() {
     onError: () => toast.error('Failed to submit review'),
   })
 
+  // Update review
+  const updateReviewMutation = useMutation({
+    mutationFn: ({ reviewId, data }) => datasetsApi.updateReview(slug, reviewId, data),
+    onSuccess: () => {
+      toast.success('Review updated')
+      setEditingReview(null)
+      queryClient.invalidateQueries({ queryKey: ['dataset-reviews', slug] })
+    },
+    onError: () => toast.error('Failed to update review'),
+  })
+
+  // Delete review
+  const deleteReviewMutation = useMutation({
+    mutationFn: (reviewId) => datasetsApi.deleteReview(slug, reviewId),
+    onSuccess: () => {
+      toast.success('Review deleted')
+      setDeleteReviewId(null)
+      queryClient.invalidateQueries({ queryKey: ['dataset-reviews', slug] })
+    },
+    onError: () => toast.error('Failed to delete review'),
+  })
+
   function handleDownload(fileId, fileName) {
     datasetsApi.download(slug, fileId).then((res) => {
       const url = res.data?.url
@@ -110,6 +141,30 @@ export default function DatasetDetailPage() {
         a.click()
       }
     }).catch(() => toast.error('Download failed'))
+  }
+
+  function handlePreview(file) {
+    setPreviewFile(file)
+    datasetsApi.getFilePreview(slug, file._id).then((res) => {
+      setPreviewData(res.data)
+    }).catch(() => {
+      setPreviewData(null)
+    })
+  }
+
+  function handleEditReview(review) {
+    setEditingReview(review)
+    setEditReviewRating(review.rating)
+    setEditReviewComment(review.comment || '')
+  }
+
+  function handleSaveEditReview(e) {
+    e.preventDefault()
+    if (!editReviewRating) return toast.error('Please select a star rating')
+    updateReviewMutation.mutate({
+      reviewId: editingReview._id,
+      data: { rating: editReviewRating, comment: editReviewComment },
+    })
   }
 
   function handleSubmitReview(e) {
@@ -140,12 +195,20 @@ export default function DatasetDetailPage() {
     {
       key: 'action', label: '',
       render: (row) => (
-        <Button size="sm" variant="outline" onClick={() => handleDownload(row._id, row.name)}>
-          <Download size={13} /> Download
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button size="sm" variant="ghost" onClick={() => handlePreview(row)} title="Preview">
+            <Eye size={13} />
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => handleDownload(row._id, row.name)}>
+            <Download size={13} /> Download
+          </Button>
+        </div>
       ),
     },
   ]
+
+  const userReview = reviews.find((r) => r.user?._id === user?._id)
+  const canReview = isAuthenticated && !userReview
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
@@ -224,7 +287,7 @@ export default function DatasetDetailPage() {
           {/* Reviews Tab */}
           {activeTab === 'Reviews' && (
             <div className="space-y-5">
-              {isAuthenticated && (
+              {canReview && (
                 <form onSubmit={handleSubmitReview} className="bg-stone-50 rounded-lg p-4 space-y-3 border border-stone-200">
                   <p className="text-sm font-medium text-stone-700">Write a review</p>
                   <StarRating value={reviewRating} onChange={setReviewRating} />
@@ -244,18 +307,59 @@ export default function DatasetDetailPage() {
                 <p className="text-sm text-stone-400 py-6 text-center">No reviews yet.</p>
               ) : (
                 reviews.map((review) => (
-                  <div key={review._id} className="border-b border-stone-100 pb-4">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-stone-800">
-                        {review.user?.name ?? 'Anonymous'}
-                      </span>
-                      <span className="text-xs text-stone-400">
-                        {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
-                      </span>
-                    </div>
-                    <StarRating value={review.rating} readonly />
-                    {review.comment && (
-                      <p className="text-sm text-stone-600 mt-2">{review.comment}</p>
+                  <div key={review._id} className="border-b border-stone-100 pb-4 group">
+                    {editingReview?._id === review._id ? (
+                      <form onSubmit={handleSaveEditReview} className="space-y-3">
+                        <StarRating value={editReviewRating} onChange={setEditReviewRating} />
+                        <Textarea
+                          rows={3}
+                          value={editReviewComment}
+                          onChange={(e) => setEditReviewComment(e.target.value)}
+                        />
+                        <div className="flex gap-2">
+                          <Button type="submit" size="sm" loading={updateReviewMutation.isPending}>
+                            Save
+                          </Button>
+                          <Button type="button" size="sm" variant="outline" onClick={() => setEditingReview(null)}>
+                            Cancel
+                          </Button>
+                        </div>
+                      </form>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-medium text-stone-800">
+                            {review.user?.name ?? 'Anonymous'}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            {review.user?._id === user?._id && (
+                              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button
+                                  onClick={() => handleEditReview(review)}
+                                  className="p-1 text-stone-400 hover:text-orange-700 rounded"
+                                  title="Edit"
+                                >
+                                  <Pencil size={12} />
+                                </button>
+                                <button
+                                  onClick={() => setDeleteReviewId(review._id)}
+                                  className="p-1 text-stone-400 hover:text-red-600 rounded"
+                                  title="Delete"
+                                >
+                                  <Trash2 size={12} />
+                                </button>
+                              </div>
+                            )}
+                            <span className="text-xs text-stone-400">
+                              {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
+                            </span>
+                          </div>
+                        </div>
+                        <StarRating value={review.rating} readonly />
+                        {review.comment && (
+                          <p className="text-sm text-stone-600 mt-2">{review.comment}</p>
+                        )}
+                      </>
                     )}
                   </div>
                 ))
@@ -354,6 +458,9 @@ export default function DatasetDetailPage() {
 
         {/* Metadata sidebar */}
         <aside className="space-y-4">
+          {/* Quality Score */}
+          <QualityScoreCard qualityScore={dataset.qualityScore} />
+
           <div className="bg-stone-50 rounded-lg border border-stone-200 p-4 space-y-3 text-sm">
             <MetaRow icon={Tag} label="Category" value={dataset.category ? getCategoryLabel(dataset.category) : null} />
             <MetaRow icon={FileText} label="License" value={dataset.license?.toUpperCase()} />
@@ -394,6 +501,25 @@ export default function DatasetDetailPage() {
           )}
         </aside>
       </div>
+
+      {/* File Preview Modal */}
+      <FilePreviewModal
+        open={!!previewFile}
+        onClose={() => { setPreviewFile(null); setPreviewData(null); }}
+        file={previewFile}
+        previewData={previewData}
+      />
+
+      {/* Delete Review Confirmation */}
+      <ConfirmDialog
+        open={!!deleteReviewId}
+        onClose={() => setDeleteReviewId(null)}
+        onConfirm={() => deleteReviewMutation.mutate(deleteReviewId)}
+        title="Delete Review"
+        message="Are you sure you want to delete your review? This action cannot be undone."
+        confirmLabel="Delete"
+        danger
+      />
     </div>
   )
 }

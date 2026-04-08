@@ -9,7 +9,10 @@ export const datasetsApi = {
   like: (slug) => apiClient.post(`/datasets/${slug}/like`),
   unlike: (slug) => apiClient.delete(`/datasets/${slug}/like`),
   download: (slug, fileId) => apiClient.get(`/datasets/${slug}/files/${fileId}/download`),
+  getFilePreview: (slug, fileId) => apiClient.get(`/datasets/${slug}/files/${fileId}/preview`),
   getVersions: (slug) => apiClient.get(`/datasets/${slug}/versions`),
   getReviews: (slug) => apiClient.get(`/datasets/${slug}/reviews`),
   createReview: (slug, data) => apiClient.post(`/datasets/${slug}/reviews`, data),
+  updateReview: (slug, reviewId, data) => apiClient.put(`/datasets/${slug}/reviews/${reviewId}`, data),
+  deleteReview: (slug, reviewId) => apiClient.delete(`/datasets/${slug}/reviews/${reviewId}`),
 }
