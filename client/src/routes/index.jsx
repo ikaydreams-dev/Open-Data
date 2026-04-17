@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react'
 import { RootLayout } from '../components/layout/RootLayout'
 import { AuthLayout } from '../components/layout/AuthLayout'
 import { ProtectedRoute } from '../components/auth/ProtectedRoute'
+import { ProtectedLayout } from '../components/auth/ProtectedLayout'
 import { RoleGuard } from '../components/auth/RoleGuard'
 import { PageSpinner } from '../components/shared/Spinner'
 import { ROLES } from '../lib/constants'
@@ -25,8 +26,11 @@ const HomePage = lazy(() => import('../pages/home/HomePage'))
 const DatasetBrowsePage = lazy(() => import('../pages/datasets/DatasetBrowsePage'))
 const DatasetDetailPage = lazy(() => import('../pages/datasets/DatasetDetailPage'))
 const DatasetUploadPage = lazy(() => import('../pages/datasets/DatasetUploadPage'))
+const DatasetEditPage = lazy(() => import('../pages/datasets/DatasetEditPage'))
+const MyDatasetsPage = lazy(() => import('../pages/datasets/MyDatasetsPage'))
 const SearchResultsPage = lazy(() => import('../pages/search/SearchResultsPage'))
 const DiscussionsPage = lazy(() => import('../pages/community/DiscussionsPage'))
+const DiscussionDetailPage = lazy(() => import('../pages/community/DiscussionDetailPage'))
 const UserProfilePage = lazy(() => import('../pages/profile/UserProfilePage'))
 const EditProfilePage = lazy(() => import('../pages/profile/EditProfilePage'))
 const OrgProfilePage = lazy(() => import('../pages/organization/OrgProfilePage'))
@@ -57,15 +61,18 @@ export const router = createBrowserRouter([
       { path: '/datasets/:slug', element: wrap(DatasetDetailPage) },
       { path: '/search', element: wrap(SearchResultsPage) },
       { path: '/community', element: wrap(DiscussionsPage) },
+      { path: '/community/:id', element: wrap(DiscussionDetailPage) },
       { path: '/users/:username', element: wrap(UserProfilePage) },
       { path: '/organizations/:slug', element: wrap(OrgProfilePage) },
       { path: '/403', element: wrap(ForbiddenPage) },
 
       // Protected routes
       {
-        element: <ProtectedRoute><></></ProtectedRoute>,
+        element: <ProtectedLayout />,
         children: [
           { path: '/datasets/upload', element: wrap(DatasetUploadPage) },
+          { path: '/datasets/:slug/edit', element: wrap(DatasetEditPage) },
+          { path: '/my-datasets', element: wrap(MyDatasetsPage) },
           { path: '/account/profile', element: wrap(EditProfilePage) },
           { path: '/account/api-keys', element: wrap(ApiKeysPage) },
         ],

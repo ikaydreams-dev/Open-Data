@@ -1,5 +1,5 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { Search, Menu, X, Database, User, LogOut, Settings, Key } from 'lucide-react'
+import { Search, Menu, X, Database, User, LogOut, Settings, Key, Upload } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { useAuthStore } from '../../store/authStore'
 import { authApi } from '../../api/auth.api'
@@ -98,6 +98,14 @@ export function Navbar() {
 
         {/* Auth area */}
         <div className="hidden md:flex items-center gap-2">
+          {isAuthenticated && (
+            <Link
+              to="/datasets/upload"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-orange-700 text-white rounded-md hover:bg-orange-800"
+            >
+              <Upload size={14} /> Upload
+            </Link>
+          )}
           {isAuthenticated ? (
             <div className="relative" ref={dropdownRef}>
               <button
@@ -113,6 +121,9 @@ export function Navbar() {
                 <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-stone-200 rounded-lg shadow-lg py-1 z-50">
                   <Link to={`/users/${user?.username}`} className="flex items-center gap-2 px-4 py-2 text-sm text-stone-700 hover:bg-stone-50" onClick={() => setDropdownOpen(false)}>
                     <User size={15} /> Profile
+                  </Link>
+                  <Link to="/my-datasets" className="flex items-center gap-2 px-4 py-2 text-sm text-stone-700 hover:bg-stone-50" onClick={() => setDropdownOpen(false)}>
+                    <Database size={15} /> My Datasets
                   </Link>
                   <Link to="/account/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-stone-700 hover:bg-stone-50" onClick={() => setDropdownOpen(false)}>
                     <Settings size={15} /> Settings
@@ -152,6 +163,8 @@ export function Navbar() {
           <NavLink to="/community" className="block px-3 py-2 text-sm rounded-md text-stone-700 hover:bg-stone-50" onClick={() => setMobileOpen(false)}>Community</NavLink>
           {isAuthenticated ? (
             <>
+              <NavLink to="/datasets/upload" className="block px-3 py-2 text-sm rounded-md text-orange-700 font-medium hover:bg-orange-50" onClick={() => setMobileOpen(false)}>Upload Dataset</NavLink>
+              <NavLink to="/my-datasets" className="block px-3 py-2 text-sm rounded-md text-stone-700 hover:bg-stone-50" onClick={() => setMobileOpen(false)}>My Datasets</NavLink>
               <NavLink to={`/users/${user?.username}`} className="block px-3 py-2 text-sm rounded-md text-stone-700 hover:bg-stone-50" onClick={() => setMobileOpen(false)}>Profile</NavLink>
               <button onClick={() => { handleLogout(); setMobileOpen(false) }} className="block w-full text-left px-3 py-2 text-sm rounded-md text-red-600 hover:bg-red-50">Sign out</button>
             </>
