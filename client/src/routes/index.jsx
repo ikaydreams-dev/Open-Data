@@ -27,6 +27,8 @@ const DatasetDetailPage = lazy(() => import('../pages/datasets/DatasetDetailPage
 const DatasetUploadPage = lazy(() => import('../pages/datasets/DatasetUploadPage'))
 const SearchResultsPage = lazy(() => import('../pages/search/SearchResultsPage'))
 const DiscussionsPage = lazy(() => import('../pages/community/DiscussionsPage'))
+const NewDiscussionPage = lazy(() => import('../pages/NewDiscussionPage'))
+const ServerErrorPage = lazy(() => import('../pages/ServerErrorPage'))
 const UserProfilePage = lazy(() => import('../pages/profile/UserProfilePage'))
 const EditProfilePage = lazy(() => import('../pages/profile/EditProfilePage'))
 const OrgProfilePage = lazy(() => import('../pages/organization/OrgProfilePage'))
@@ -57,6 +59,7 @@ export const router = createBrowserRouter([
       { path: '/datasets/:slug', element: wrap(DatasetDetailPage) },
       { path: '/search', element: wrap(SearchResultsPage) },
       { path: '/community', element: wrap(DiscussionsPage) },
+      { path: '/500', element: wrap(ServerErrorPage) },
       { path: '/users/:username', element: wrap(UserProfilePage) },
       { path: '/organizations/:slug', element: wrap(OrgProfilePage) },
       { path: '/403', element: wrap(ForbiddenPage) },
@@ -68,6 +71,7 @@ export const router = createBrowserRouter([
           { path: '/datasets/upload', element: wrap(DatasetUploadPage) },
           { path: '/account/profile', element: wrap(EditProfilePage) },
           { path: '/account/api-keys', element: wrap(ApiKeysPage) },
+          { path: '/community/new', element: wrap(NewDiscussionPage) },
         ],
       },
 

@@ -72,3 +72,86 @@ export const AFRICAN_COUNTRIES = [
   'South Sudan', 'Sudan', 'Tanzania', 'Togo', 'Tunisia', 'Uganda',
   'Zambia', 'Zimbabwe',
 ]
+
+// Mock data for search results
+export const MOCK_DATASETS = [
+  {
+    id: 1,
+    title: 'African Health Statistics 2023',
+    description: 'Comprehensive health data across African countries including vaccination rates, disease prevalence, and healthcare access.',
+    category: 'healthcare',
+    country: 'Nigeria',
+    license: 'cc-by',
+    fileSize: 2048000, // 2MB
+    createdAt: '2023-06-15',
+    downloads: 1250,
+    rating: 4.5,
+    tags: ['health', 'vaccination', 'africa'],
+  },
+  {
+    id: 2,
+    title: 'Climate Change Impact on Agriculture',
+    description: 'Dataset analyzing the effects of climate change on crop yields and food security in East Africa.',
+    category: 'agriculture',
+    country: 'Kenya',
+    license: 'cc0',
+    fileSize: 5120000, // 5MB
+    createdAt: '2023-08-22',
+    downloads: 890,
+    rating: 4.2,
+    tags: ['climate', 'agriculture', 'food-security'],
+  },
+  {
+    id: 3,
+    title: 'Economic Indicators Dashboard',
+    description: 'GDP, inflation, and trade data for African nations from 2010-2023.',
+    category: 'economics',
+    country: 'South Africa',
+    license: 'odbl',
+    fileSize: 1024000, // 1MB
+    createdAt: '2023-04-10',
+    downloads: 2100,
+    rating: 4.8,
+    tags: ['economics', 'gdp', 'trade'],
+  },
+  {
+    id: 4,
+    title: 'Education Access in Rural Areas',
+    description: 'Survey data on school attendance, literacy rates, and educational infrastructure in rural African communities.',
+    category: 'education',
+    country: 'Ghana',
+    license: 'cc-by-sa',
+    fileSize: 1536000, // 1.5MB
+    createdAt: '2023-09-05',
+    downloads: 675,
+    rating: 4.0,
+    tags: ['education', 'literacy', 'rural'],
+  },
+  {
+    id: 5,
+    title: 'Renewable Energy Adoption',
+    description: 'Tracking solar and wind energy implementation across African countries.',
+    category: 'energy',
+    country: 'Morocco',
+    license: 'cc-by-nc',
+    fileSize: 3072000, // 3MB
+    createdAt: '2023-07-18',
+    downloads: 1450,
+    rating: 4.6,
+    tags: ['energy', 'renewable', 'solar'],
+  },
+]
+
+// Mock usernames for mentions
+export const MOCK_USERNAMES = [
+  'johndoe',
+  'sarahsmith',
+  'mikejohnson',
+  'emilydavis',
+  'alexwilson',
+  'lisabrown',
+  'davidmiller',
+  'jenniferlee',
+  'chrisgarcia',
+  'amandawhite',
+]
