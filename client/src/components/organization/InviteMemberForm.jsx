@@ -5,18 +5,6 @@ import { Input } from '../shared/Input'
 import { Button } from '../shared/Button'
 import { cn } from '../../lib/utils'
 
-/**
- * InviteMemberForm — email-based invite form for an organisation.
- *
- * Currently the API accepts an email address and the server sends an invitation.
- * The form is intentionally simple to match the existing inviteMember endpoint.
- *
- * Props:
- *   onInvite    {function(email): Promise}  Called with the email when the form is submitted
- *   isLoading   {boolean}                   Show a loading state on the submit button
- *   className   {string}
- *   inline      {boolean}  Render as a compact single-row form (default: false — stacked)
- */
 export function InviteMemberForm({ onInvite, isLoading, className, inline = false }) {
   const {
     register,

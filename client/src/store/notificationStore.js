@@ -1,20 +1,3 @@
-/**
- * src/store/notificationStore.js
- *
- * In-app notification inbox.
- *
- * Distinct from react-hot-toast (which shows transient feedback toasts).
- * This store tracks durable notifications — dataset approved/rejected,
- * new comment on your dataset, org invitation, etc. — that persist until
- * the user dismisses them, survive page refreshes, and power a notification
- * bell in the Navbar.
- *
- * Persisted to localStorage under the key `odk_notifications` so the
- * unread count survives a refresh without a network round-trip.
- *
- * Pattern: same shape as authStore, uiStore, and searchStore (Zustand).
- */
-
 import { create } from 'zustand'
 
 // ─── Constants ────────────────────────────────────────────────────────────────

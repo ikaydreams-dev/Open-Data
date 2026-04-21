@@ -4,9 +4,6 @@ import { Badge } from '../shared/Badge'
 import { formatNumber } from '../../lib/utils'
 import { cn } from '../../lib/utils'
 
-/**
- * Org type → display label
- */
 const TYPE_LABEL = {
   university:        'University',
   government:        'Government',
@@ -16,13 +13,6 @@ const TYPE_LABEL = {
   other:             'Organization',
 }
 
-/**
- * OrgCard — organisation listing card, analogous to DatasetCard.
- *
- * Props:
- *   org       {object}   Organization object from the API
- *   className {string}
- */
 export function OrgCard({ org, className }) {
   const {
     name,

@@ -3,17 +3,6 @@ import { Camera } from 'lucide-react'
 import { resolveAvatarSrc } from '../../lib/cloudinary'
 import { cn } from '../../lib/utils'
 
-/**
- * UserAvatar — displays a user's avatar image, or falls back to initials.
- *
- * Props:
- *   user        {object}    User object with { name, avatar: { url, publicId } }
- *   size        {number}    Pixel size for both dimensions (default: 40)
- *   editable    {boolean}   Show a camera overlay button for photo upload
- *   uploading   {boolean}   Show a spinner in the overlay while uploading
- *   onUpload    {function}  Called with a File when the user selects a new photo
- *   className   {string}    Extra classes on the outer wrapper
- */
 export function UserAvatar({
   user,
   size = 40,

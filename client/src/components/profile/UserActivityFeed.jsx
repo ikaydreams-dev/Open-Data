@@ -7,21 +7,6 @@ import { formatRelativeTime } from '../../lib/formatters'
 import { formatCategory } from '../../lib/formatters'
 import { cn } from '../../lib/utils'
 
-/**
- * UserActivityFeed — displays a chronological list of a user's recent activity.
- *
- * The server doesn't expose a dedicated activity endpoint yet, so this
- * component is driven by the user's datasets (uploads) as its primary source.
- * Each dataset produces one "upload" activity item. When a richer activity
- * API is added, the `activities` prop shape below can be extended without
- * changing the rendering logic.
- *
- * Props:
- *   datasets    {Array}    Array of dataset objects from datasetsApi.list
- *   isLoading   {boolean}
- *   isOwnProfile {boolean} Changes empty-state messaging
- *   className   {string}
- */
 export function UserActivityFeed({ datasets = [], isLoading, isOwnProfile, className }) {
   // Convert datasets to activity items
   const activities = datasets.map((ds) => ({

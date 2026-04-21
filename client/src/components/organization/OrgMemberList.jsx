@@ -27,17 +27,7 @@ const ORG_ROLE_VARIANT = {
   member: 'default',
 }
 
-/**
- * OrgMemberList — renders the member list for an organisation.
- *
- * Props:
- *   members        {Array}    Member objects: { _id, name, username, avatar, role, orgRole, joinedAt }
- *   isLoading      {boolean}
- *   canManage      {boolean}  Show remove buttons
- *   currentUserId  {string}   Prevent user from removing themselves
- *   onRemove       {function(member)}  Called when the remove button is clicked
- *   className      {string}
- */
+
 export function OrgMemberList({
   members = [],
   isLoading,
