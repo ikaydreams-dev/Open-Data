@@ -14,17 +14,6 @@ const TYPE_LABEL = {
   other:              'Organization',
 }
 
-/**
- * OrgHeader — the top-of-page header for an organisation profile.
- *
- * Extracted from OrgProfilePage so it can be composed independently and
- * easily extended (e.g. adding a "Follow" button later).
- *
- * Props:
- *   org          {object}   Organization object from the API
- *   canEdit      {boolean}  Show an "Edit" button (for org admins / platform admin)
- *   className    {string}
- */
 export function OrgHeader({ org, canEdit = false, className }) {
   if (!org) return null
 

@@ -2,18 +2,6 @@ import { Link } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
 import { cn } from '../../lib/utils'
 
-/**
- * PageHeader — consistent top-of-page heading used across all page types.
- *
- * Props:
- *   title       {string}          Required. The main page heading.
- *   description {string}          Optional subtitle below the title.
- *   action      {ReactNode}       Optional element pinned to the right (button, link, etc.).
- *   breadcrumb  {Array<{label, to?}>}  Optional breadcrumb trail above the title.
- *   border      {boolean}         Render a bottom border (default: false).
- *   size        {'sm'|'md'|'lg'}  Controls title size (default: 'md').
- *   className   {string}          Extra classes on the outer wrapper.
- */
 export function PageHeader({
     title,
     description,

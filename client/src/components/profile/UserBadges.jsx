@@ -13,14 +13,7 @@ const ROLE_VARIANT = {
   institution: 'warning',
 }
 
-/**
- * UserBadges — renders a user's role badge plus any special status badges.
- *
- * Props:
- *   user         {object}   User object with { role, emailVerified }
- *   showVerified {boolean}  Show email-verified checkmark badge (default: false)
- *   className    {string}   Extra classes on the wrapper
- */
+
 export function UserBadges({ user, showVerified = false, className }) {
   if (!user) return null
 

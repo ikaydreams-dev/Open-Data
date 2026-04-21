@@ -9,18 +9,6 @@ import { EmptyState } from '../shared/EmptyState'
 import { PageSpinner } from '../shared/Spinner'
 import { cn } from '../../lib/utils'
 
-/**
- * OrgDatasetsGrid — paginated grid of datasets belonging to an organisation.
- *
- * Fetches its own data using the org slug so it can be dropped into any page
- * that has the slug available, without the parent managing dataset state.
- *
- * Props:
- *   orgSlug     {string}   Organization slug used to filter datasets
- *   canUpload   {boolean}  Show an "Upload Dataset" CTA when the grid is empty
- *   pageSize    {number}   Datasets per page (default: 12)
- *   className   {string}
- */
 export function OrgDatasetsGrid({ orgSlug, canUpload = false, pageSize = 12, className }) {
   const [page, setPage] = useState(1)
 

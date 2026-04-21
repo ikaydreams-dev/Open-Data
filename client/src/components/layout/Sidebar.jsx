@@ -2,22 +2,6 @@ import { useState } from 'react'
 import { X, SlidersHorizontal } from 'lucide-react'
 import { cn } from '../../lib/utils'
 
-/**
- * Sidebar — sticky left-panel layout component used on browse/detail pages.
- *
- * Desktop: always visible, fixed width column.
- * Mobile: hidden by default; revealed via a floating toggle button (or
- *         from a parent that calls setMobileOpen).
- *
- * Props:
- *   children        {ReactNode}   Sidebar content (filters, nav links, etc.).
- *   title           {string}      Optional heading inside the sidebar.
- *   width           {string}      Tailwind width class (default: 'w-56').
- *   mobileLabel     {string}      Label for the mobile open button (default: 'Filters').
- *   className       {string}      Extra classes on the desktop panel.
- *   contentClassName {string}     Extra classes on the content wrapper.
- *   sticky          {boolean}     Make panel sticky (default: true).
- */
 export function Sidebar({
     children,
     title,
@@ -101,16 +85,6 @@ export function Sidebar({
     )
 }
 
-/**
- * SidebarLayout — wraps a page into a two-column [sidebar | content] grid.
- * Drop-in replacement for the manual flex layout used in DatasetBrowsePage.
- *
- * Props:
- *   sidebar   {ReactNode}   The <Sidebar> element.
- *   children  {ReactNode}   The main content area.
- *   gap       {string}      Tailwind gap class (default: 'gap-8').
- *   className {string}      Extra classes on the container.
- */
 export function SidebarLayout({ sidebar, children, gap = 'gap-8', className }) {
     return (
         <div className={cn('flex', gap, className)}>

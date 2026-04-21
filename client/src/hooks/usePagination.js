@@ -1,11 +1,5 @@
 import { useState, useCallback } from 'react'
 
-/**
- * Hook for managing pagination state
- * Prevents page number from going below 1
- * @param {number} initialPage - Starting page number (default: 1)
- * @returns {Object} Object containing currentPage and navigation functions
- */
 export function usePagination(initialPage = 1) {
   const [currentPage, setCurrentPage] = useState(Math.max(1, initialPage))
 

@@ -1,25 +1,6 @@
 import { useState, useRef, useCallback } from 'react'
 import { formatFileSize } from '../lib/utils'
 
-/**
- * useUpload — manages a staged list of files before they are submitted.
- *
- * Encapsulates the file-picking, drag-and-drop, and file-list state that
- * DatasetUploadPage (and the avatar uploader) manage manually today.
- *
- * @param {Object}   options
- * @param {number}   options.maxFiles    Max number of files allowed (default: 10).
- * @param {string[]} options.accept      Accepted MIME type prefixes e.g. ['text/', 'application/json'].
- *                                       Empty means accept everything.
- *
- * @returns {Object}  See return block below.
- *
- * @example — dataset upload
- * const { files, addFiles, removeFile, clearFiles, dragging, dragProps, fileInputRef } = useUpload({ maxFiles: 10 })
- *
- * @example — single avatar upload
- * const { files, addFiles, fileInputRef } = useUpload({ maxFiles: 1 })
- */
 export function useUpload({ maxFiles = 10, accept = [] } = {}) {
     const [files, setFiles]     = useState([])   // Array<FileEntry>
     const [dragging, setDragging] = useState(false)

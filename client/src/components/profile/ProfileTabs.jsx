@@ -1,27 +1,5 @@
 import { cn } from '../../lib/utils'
 
-/**
- * ProfileTabs — horizontal tab bar for the user profile page.
- *
- * Tabs are driven by the `tabs` prop so pages control which tabs exist
- * and what counts they show (e.g. "Datasets (12)").
- *
- * Props:
- *   tabs        {Array<{ key, label, count? }>}   Tab definitions
- *   activeTab   {string}                           Key of the active tab
- *   onChange    {function(key)}                    Called when a tab is clicked
- *   className   {string}
- *
- * @example
- * <ProfileTabs
- *   tabs={[
- *     { key: 'datasets',  label: 'Datasets',  count: 12 },
- *     { key: 'activity',  label: 'Activity' },
- *   ]}
- *   activeTab={activeTab}
- *   onChange={setActiveTab}
- * />
- */
 export function ProfileTabs({ tabs = [], activeTab, onChange, className }) {
   return (
     <div className={cn('flex border-b border-stone-200', className)}>

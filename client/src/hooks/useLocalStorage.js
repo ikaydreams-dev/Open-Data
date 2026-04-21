@@ -1,19 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
 
-/**
- * useLocalStorage — synced state that persists to localStorage.
- *
- * Behaves like useState but reads the initial value from localStorage and
- * writes back on every update. Handles JSON serialization automatically.
- * Safe in SSR (no window access at import time).
- *
- * @param {string}   key           localStorage key.
- * @param {*}        initialValue  Fallback when the key doesn't exist yet.
- * @returns {[value, setValue, removeValue]}
- *
- * @example
- * const [theme, setTheme, clearTheme] = useLocalStorage('theme', 'light')
- */
 export function useLocalStorage(key, initialValue) {
     // Lazily read from storage on first render only
     const [storedValue, setStoredValue] = useState(() => {
